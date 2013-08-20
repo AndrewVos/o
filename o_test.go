@@ -9,6 +9,7 @@ import (
 type Struct1 struct {
   Name string
   Age int
+  Married bool
 }
 
 func assertOutputContains(t *testing.T, output string, expected string) {
@@ -28,4 +29,7 @@ func TestStruct(t *testing.T) {
 
   assertOutputContains(t, output, "Age")
   assertOutputContains(t, output, "42")
+
+  assertOutputContains(t, output, "Married")
+  assertOutputContains(t, output, "false")
 }

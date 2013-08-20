@@ -38,6 +38,12 @@ func writeStruct(interfaceValue interface{}, structType reflect.Type) string {
       value = value.Field(i)
       if value.Kind() == reflect.Int {
         attributes[field.Name] = strconv.Itoa(int(value.Int()))
+      } else if value.Kind() == reflect.Bool {
+        if value.Bool() {
+          attributes[field.Name] = "true"
+        } else {
+          attributes[field.Name] = "false"
+        }
       } else {
         attributes[field.Name] = value.String()
       }
