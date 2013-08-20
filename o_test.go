@@ -33,3 +33,23 @@ func TestStruct(t *testing.T) {
   assertOutputContains(t, output, "Married")
   assertOutputContains(t, output, "false")
 }
+
+type StructWithName struct {
+  Name string
+}
+type StructWithAge struct {
+  Age int
+}
+
+type StructWithDepth struct {
+  Name StructWithName
+  Age StructWithAge
+}
+
+func TestStructWithDepth(t *testing.T) {
+  s := StructWithDepth { Name: StructWithName { Name: "Mika" }, Age: StructWithAge { Age: 10 } }
+  output := o(s)
+  fmt.Println(output)
+  assertOutputContains(t, output, "Name")
+  assertOutputContains(t, output, "Mika")
+}

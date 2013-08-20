@@ -19,13 +19,13 @@ func o(i interface{}) string {
   }
 
   if t.Kind() == reflect.Struct {
-    return writeStruct(i, t)
+    return writeStruct(i, t, 0)
   }
 
   return t.Name()
 }
 
-func writeStruct(interfaceValue interface{}, structType reflect.Type) string {
+func writeStruct(interfaceValue interface{}, structType reflect.Type, depth int) string {
   attributes := map[string]string {}
   for i := 0; i < structType.NumField(); i++ {
     field := structType.Field(i)
@@ -44,6 +44,8 @@ func writeStruct(interfaceValue interface{}, structType reflect.Type) string {
         } else {
           attributes[field.Name] = "false"
         }
+      } else if value.Kind() == reflect.Struct {
+        attributes[field.Name] = writeStruct(value.Interface(), value.Type(), depth + 1)
       } else {
         attributes[field.Name] = value.String()
       }
@@ -53,10 +55,19 @@ func writeStruct(interfaceValue interface{}, structType reflect.Type) string {
   widestAttributeName := widestAttributeName(attributes)
   allFields := []string{}
   for name, value := range attributes {
-    allFields = append(allFields, "  " + colouriseField(rjust(name, widestAttributeName)) + ": " + colouriseValue(value))
+    allFields = append(allFields, margin(depth + 1) + colouriseField(rjust(name, widestAttributeName)) + ": " + colouriseValue(value))
   }
 
-  return colouriseStructTitle(structType.Name()) + " {\n" + strings.Join(allFields, "\n") + "\n}\n"
+  return colouriseStructTitle(structType.Name()) + " {\n" + strings.Join(allFields, "\n") + "\n" + margin(depth) + "}"
+}
+
+func margin(depth int) string {
+  m := ""
+  if depth == 0 { return m }
+  for i:= 0; i <= depth; i++ {
+    m += "  "
+  }
+  return m
 }
 
 func widestAttributeName(attributes map[string]string) int {
