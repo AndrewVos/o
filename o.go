@@ -1,13 +1,18 @@
 package o
 
 import (
+  "fmt"
   "reflect"
   "strings"
   "strconv"
   "github.com/AndrewVos/colour"
 )
 
-func OO(i interface{} ) string {
+func O(i interface{}) {
+  fmt.Println(OO(i))
+}
+
+func OO(i interface{}) string {
   t := reflect.TypeOf(i)
   if t.Kind() == reflect.Ptr{
     t = t.Elem()
