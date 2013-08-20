@@ -20,7 +20,7 @@ func assertOutputContains(t *testing.T, output string, expected string) {
 
 func TestStruct(t *testing.T) {
   s := Struct1{Name: "Arthur", Age: 42}
-  output := OO(s)
+  output := o(s)
   fmt.Println(output)
   assertOutputContains(t, output, "Struct1")
 

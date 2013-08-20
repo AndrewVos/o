@@ -9,10 +9,10 @@ import (
 )
 
 func O(i interface{}) {
-  fmt.Println(OO(i))
+  fmt.Println(o(i))
 }
 
-func OO(i interface{}) string {
+func o(i interface{}) string {
   t := reflect.TypeOf(i)
   if t.Kind() == reflect.Ptr{
     t = t.Elem()
