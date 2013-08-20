@@ -22,16 +22,20 @@ func OO(i interface{}) string {
     return writeStruct(i, t)
   }
 
-  return ""
+  return t.Name()
 }
 
 func writeStruct(interfaceValue interface{}, structType reflect.Type) string {
   attributes := map[string]string {}
   for i := 0; i < structType.NumField(); i++ {
-    value := reflect.ValueOf(interfaceValue).Field(i)
     field := structType.Field(i)
 
     if !field.Anonymous {
+      value := reflect.ValueOf(interfaceValue)
+      if value.Kind() == reflect.Ptr {
+        value = value.Elem()
+      }
+      value = value.Field(i)
       if value.Kind() == reflect.Int {
         attributes[field.Name] = strconv.Itoa(int(value.Int()))
       } else {
