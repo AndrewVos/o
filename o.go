@@ -35,19 +35,22 @@ func writeStruct(interfaceValue interface{}, structType reflect.Type) string {
     }
   }
 
-  widest := 0
-  for name,_ := range attributes {
-    if length := len(name); length > widest { widest = length }
-  }
-
+  widestAttributeName := widestAttributeName(attributes)
   allFields := []string{}
   for name, value := range attributes {
-    allFields = append(allFields, "  " + colouriseField(rjust(name, widest)) + ": " + colouriseValue(value))
+    allFields = append(allFields, "  " + colouriseField(rjust(name, widestAttributeName)) + ": " + colouriseValue(value))
   }
 
   return colouriseStructTitle(structType.Name()) + " {\n" + strings.Join(allFields, "\n") + "\n}\n"
 }
 
+func widestAttributeName(attributes map[string]string) int {
+  widest := 0
+  for name,_ := range attributes {
+    if length := len(name); length > widest { widest = length }
+  }
+  return widest
+}
 func colouriseStructTitle(title string) string { return colour.Blue(title) }
 func colouriseField(field string) string { return colour.Green(field) }
 func colouriseValue(value string) string { return colour.Yellow(value) }
