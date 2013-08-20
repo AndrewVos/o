@@ -3,6 +3,8 @@ package o
 import (
   "reflect"
   "strings"
+  "strconv"
+  "github.com/AndrewVos/colour"
 )
 
 func OO(i interface{} ) string {
@@ -19,7 +21,7 @@ func OO(i interface{} ) string {
 }
 
 func writeStruct(interfaceValue interface{}, structType reflect.Type) string {
-  s := structType.Name()
+  s := colouriseStructTitle(structType.Name()) + " {\n"
 
   attrs := map[string]string {}
   for i := 0; i < structType.NumField(); i++ {
@@ -27,7 +29,11 @@ func writeStruct(interfaceValue interface{}, structType reflect.Type) string {
     field := structType.Field(i)
 
     if !field.Anonymous {
-      attrs[field.Name] = (value.String())
+      if value.Kind() == reflect.Int {
+        attrs[field.Name] = strconv.Itoa(int(value.Int()))
+      } else {
+        attrs[field.Name] = value.String()
+      }
     }
   }
 
@@ -38,13 +44,17 @@ func writeStruct(interfaceValue interface{}, structType reflect.Type) string {
 
   allFields := []string{}
   for name, value := range attrs {
-    allFields = append(allFields, rjust(name, widest) + ":" + value)
+    allFields = append(allFields, "  " + colouriseField(rjust(name, widest)) + ": " + colouriseValue(value))
   }
 
-  s = s + "\n" + strings.Join(allFields, "\n")
+  s = s + strings.Join(allFields, "\n") + "\n}\n"
 
   return s
 }
+
+func colouriseStructTitle(title string) string { return colour.Blue(title) }
+func colouriseField(field string) string { return colour.Green(field) }
+func colouriseValue(value string) string { return colour.Yellow(value) }
 
 func rjust(text string, width int) string {
   if len(text) < width {
