@@ -67,7 +67,8 @@ func writeSlice(depth int, interfaceValue interface{}) string {
 }
 
 func writeString(interfaceValue interface{}) string {
-  return `"` + colourValue(interfaceValue.(string)) + `"`
+  quote := colourQuotes(`"`)
+  return quote + colourValue(interfaceValue.(string)) + quote
 }
 
 func writeStruct(depth int, interfaceValue interface{}) string {
@@ -121,6 +122,7 @@ func margin(depth int) string {
   return m
 }
 
+func colourQuotes(quote string) string { return colour.Red(quote) }
 func colourTitle(title string) string { return colour.Blue(title) }
 func colourField(field string) string { return colour.Green(field) }
 func colourValue(value string) string { return colour.Yellow(value) }
