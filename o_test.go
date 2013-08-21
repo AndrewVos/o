@@ -112,3 +112,17 @@ func TestStructWithArray(t *testing.T) {
   assertOutputContains(t, output, "ThingValue")
   assertOutputContains(t, output, "ermmm")
 }
+
+func TestMap(t *testing.T) {
+  s := map[string] string {
+    "I like": "cake",
+    "And also": "ice cream",
+  }
+  output := o(s)
+  fmt.Println(output)
+  assertOutputContains(t, output, "map")
+  assertOutputContains(t, output, "I like")
+  assertOutputContains(t, output, "cake")
+  assertOutputContains(t, output, "And also")
+  assertOutputContains(t, output, "ice cream")
+}

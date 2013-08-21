@@ -23,20 +23,22 @@ func write(name string, depth int, i interface{}) string {
     t = t.Elem()
   }
   if t.Kind() == reflect.Int {
-    result += writeInt(depth, i)
+    result += writeInt(i)
   } else if t.Kind() == reflect.String {
-    result += writeString(depth, i)
+    result += writeString(i)
   } else if t.Kind() == reflect.Bool {
-    result += writeBool(depth, i)
+    result += writeBool(i)
   } else if t.Kind() == reflect.Struct {
     result += writeStruct(depth, i)
   } else if t.Kind() == reflect.Slice {
     result += writeSlice(depth, i)
+  } else if t.Kind() == reflect.Map {
+    result += writeMap(depth, i)
   }
   return result
 }
 
-func writeBool(depth int, i interface{}) string {
+func writeBool(i interface{}) string {
   if i.(bool) {
     return colourValue("true")
   } else {
@@ -44,7 +46,7 @@ func writeBool(depth int, i interface{}) string {
   }
 }
 
-func writeInt(depth int, i interface{}) string {
+func writeInt(i interface{}) string {
   value := reflect.ValueOf(i)
   if value.Kind() == reflect.Ptr {
     value = value.Elem()
@@ -64,7 +66,7 @@ func writeSlice(depth int, interfaceValue interface{}) string {
   return result
 }
 
-func writeString(depth int, interfaceValue interface{}) string {
+func writeString(interfaceValue interface{}) string {
   return "`" + colourValue(interfaceValue.(string)) + "`"
 }
 
@@ -95,6 +97,19 @@ func writeStruct(depth int, interfaceValue interface{}) string {
   }
 
   return result + margin(depth) + "}"
+}
+
+func writeMap(depth int, interfaceValue interface{}) string {
+  result := colourTitle("map") + " {\n"
+  t := reflect.TypeOf(interfaceValue)
+  if t.Kind() == reflect.Ptr{ t = t.Elem() }
+
+  value := reflect.ValueOf(interfaceValue)
+  for _, key := range value.MapKeys() {
+    mapValue := value.MapIndex(key)
+    result += margin(depth + 1) + write("", depth + 1, key.Interface()) + ": " + write("", depth + 1, mapValue.Interface()) + ",\n"
+  }
+  return result + "}"
 }
 
 func margin(depth int) string {
