@@ -25,4 +25,4 @@ Run that and you'll see something like this:
 
 ## FAQ
   Q: How do I pronounce o.O?
-  A: ![Kind of like this](http://www.youtube.com/watch?v=140S4LkQxxA)
+  A: [Kind of like this](http://www.youtube.com/watch?v=140S4LkQxxA)
