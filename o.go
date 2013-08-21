@@ -3,7 +3,6 @@ package o
 import (
   "fmt"
   "reflect"
-  "strings"
   "strconv"
   "github.com/AndrewVos/colour"
 )
@@ -13,64 +12,89 @@ func O(i interface{}) {
 }
 
 func o(i interface{}) string {
+  return write("", 0, i)
+}
+
+func write(name string, depth int, i interface{}) string {
+  result := name
+
   t := reflect.TypeOf(i)
   if t.Kind() == reflect.Ptr{
     t = t.Elem()
   }
-
-  if t.Kind() == reflect.String {
-    return writeString(i)
-  } else if t.Kind() == reflect.Int {
-    return writeInt(i)
+  if t.Kind() == reflect.Int {
+    result += writeInt(depth, i)
+  } else if t.Kind() == reflect.String {
+    result += writeString(depth, i)
+  } else if t.Kind() == reflect.Bool {
+    result += writeBool(depth, i)
   } else if t.Kind() == reflect.Struct {
-    return writeStruct(i, t, 0)
+    result += writeStruct(depth, i)
+  } else if t.Kind() == reflect.Slice {
+    result += writeSlice(depth, i)
+  }
+  return result
+}
+
+func writeBool(depth int, i interface{}) string {
+  if i.(bool) {
+    return colourValue("true")
+  } else {
+    return colourValue("false")
+  }
+}
+
+func writeInt(depth int, i interface{}) string {
+  value := reflect.ValueOf(i)
+  if value.Kind() == reflect.Ptr {
+    value = value.Elem()
+  }
+  return colourValue(strconv.Itoa(int(value.Int())))
+}
+
+func writeSlice(depth int, interfaceValue interface{}) string {
+  result := margin(depth) + colourTitle("slice") + " [" + "\n"
+  s := reflect.ValueOf(interfaceValue)
+
+  for i := 0; i < s.Len(); i++ {
+    result += margin(depth + 1) + write("", depth + 1, s.Index(i).Interface()) + ",\n"
   }
 
-  return t.Name()
+  result += margin(depth) + "]"
+  return result
 }
 
-func writeString(interfaceValue interface{}) string {
-  return colouriseStructTitle("string") + " (\n" + margin(1) + colouriseValue(interfaceValue.(string)) + "\n)"
+func writeString(depth int, interfaceValue interface{}) string {
+  return "`" + colourValue(interfaceValue.(string)) + "`"
 }
 
-func writeInt(interfaceValue interface{}) string {
-  return colouriseStructTitle("int") + " (\n" + margin(1) + colouriseValue(strconv.Itoa(interfaceValue.(int))) + "\n)"
-}
+func writeStruct(depth int, interfaceValue interface{}) string {
+  t := reflect.TypeOf(interfaceValue)
+  if t.Kind() == reflect.Ptr{
+    t = t.Elem()
+  }
+  value := reflect.ValueOf(interfaceValue)
 
-func writeStruct(interfaceValue interface{}, structType reflect.Type, depth int) string {
-  attributes := map[string]string {}
-  for i := 0; i < structType.NumField(); i++ {
-    field := structType.Field(i)
+  result := colourTitle(t.Name()) + " {\n"
+
+  fieldSeparator := ": "
+  widestName := 0
+  for i := 0; i < t.NumField(); i++ {
+    if length := len(t.Field(i).Name) + len(fieldSeparator); length > widestName {
+      widestName = length
+    }
+  }
+  for i := 0; i < t.NumField(); i++ {
+    field := t.Field(i)
 
     if !field.Anonymous {
-      value := reflect.ValueOf(interfaceValue)
-      if value.Kind() == reflect.Ptr {
-        value = value.Elem()
-      }
-      value = value.Field(i)
-      if value.Kind() == reflect.Int {
-        attributes[field.Name] = strconv.Itoa(int(value.Int()))
-      } else if value.Kind() == reflect.Bool {
-        if value.Bool() {
-          attributes[field.Name] = "true"
-        } else {
-          attributes[field.Name] = "false"
-        }
-      } else if value.Kind() == reflect.Struct {
-        attributes[field.Name] = writeStruct(value.Interface(), value.Type(), depth + 1)
-      } else {
-        attributes[field.Name] = value.String()
-      }
+      it := value.Field(i).Interface()
+      displayName := colourField(LeftJustify(field.Name + fieldSeparator, widestName))
+      result += margin(depth + 1) + write(displayName, depth + 1, it) + "\n"
     }
   }
 
-  widestAttributeName := widestAttributeName(attributes)
-  allFields := []string{}
-  for name, value := range attributes {
-    allFields = append(allFields, margin(depth + 1) + colouriseField(rjust(name, widestAttributeName)) + ": " + colouriseValue(value))
-  }
-
-  return colouriseStructTitle(structType.Name()) + " {\n" + strings.Join(allFields, "\n") + "\n" + margin(depth) + "}"
+  return result + margin(depth) + "}"
 }
 
 func margin(depth int) string {
@@ -82,21 +106,14 @@ func margin(depth int) string {
   return m
 }
 
-func widestAttributeName(attributes map[string]string) int {
-  widest := 0
-  for name,_ := range attributes {
-    if length := len(name); length > widest { widest = length }
-  }
-  return widest
-}
-func colouriseStructTitle(title string) string { return colour.Blue(title) }
-func colouriseField(field string) string { return colour.Green(field) }
-func colouriseValue(value string) string { return colour.Yellow(value) }
+func colourTitle(title string) string { return colour.Blue(title) }
+func colourField(field string) string { return colour.Green(field) }
+func colourValue(value string) string { return colour.Yellow(value) }
 
-func rjust(text string, width int) string {
+func LeftJustify(text string, width int) string {
   if len(text) < width {
     for len(text) < width {
-      text = " " + text
+      text = text + " "
     }
   }
   return text

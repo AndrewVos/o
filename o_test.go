@@ -22,7 +22,6 @@ func TestString(t *testing.T) {
   s := "o.OOO"
   output := o(s)
   fmt.Println(output)
-  assertOutputContains(t, output, "string")
   assertOutputContains(t, output, "o.OOO")
 }
 
@@ -30,8 +29,19 @@ func TestInt(t * testing.T) {
   i := 12345
   output := o(i)
   fmt.Println(output)
-  assertOutputContains(t, output, "int")
   assertOutputContains(t, output, "12345")
+}
+
+func TestBoolTrue(t *testing.T) {
+  i := true
+  output := o(i)
+  assertOutputContains(t, output, "true")
+}
+
+func TestBoolFalse(t *testing.T) {
+  i := false
+  output := o(i)
+  assertOutputContains(t, output, "false")
 }
 
 func TestStruct(t *testing.T) {
@@ -58,14 +68,47 @@ type StructWithAge struct {
 }
 
 type StructWithDepth struct {
-  Name StructWithName
-  Age StructWithAge
+  NameStruct StructWithName
+  AgeStruct StructWithAge
 }
 
 func TestStructWithDepth(t *testing.T) {
-  s := StructWithDepth { Name: StructWithName { Name: "Mika" }, Age: StructWithAge { Age: 10 } }
+  s := StructWithDepth { NameStruct: StructWithName { Name: "Mika" }, AgeStruct: StructWithAge { Age: 10 } }
   output := o(s)
   fmt.Println(output)
+  assertOutputContains(t, output, "NameStruct")
   assertOutputContains(t, output, "Name")
   assertOutputContains(t, output, "Mika")
+
+  assertOutputContains(t, output, "AgeStruct")
+  assertOutputContains(t, output, "Age")
+  assertOutputContains(t, output, "10")
+}
+
+type Thing struct {
+  ThingValue string
+}
+
+type StructWithArrays struct {
+  Things []Thing
+}
+
+func TestArray(t *testing.T) {
+  s := []Thing { { ThingValue: "ererrrmmmm" }, }
+  output := o(s)
+  fmt.Println(output)
+  assertOutputContains(t, output, "slice")
+  assertOutputContains(t, output, "ThingValue")
+  assertOutputContains(t, output, "ererrrmmmm")
+}
+
+func TestStructWithArray(t *testing.T) {
+  s := StructWithArrays{ Things: []Thing{ { ThingValue: "ermmm" }, } }
+  output := o(s)
+  fmt.Println(output)
+  assertOutputContains(t, output, "StructWithArrays")
+  assertOutputContains(t, output, "Things")
+  assertOutputContains(t, output, "slice")
+  assertOutputContains(t, output, "ThingValue")
+  assertOutputContains(t, output, "ermmm")
 }
