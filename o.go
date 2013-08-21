@@ -92,7 +92,7 @@ func writeStruct(depth int, interfaceValue interface{}) string {
 
     if !field.Anonymous {
       it := value.Field(i).Interface()
-      displayName := colourField(LeftJustify(field.Name + fieldSeparator, widestName))
+      displayName := colourField(leftJustify(field.Name + fieldSeparator, widestName))
       result += margin(depth + 1) + write(displayName, depth + 1, it) + "\n"
     }
   }
@@ -127,7 +127,7 @@ func colourTitle(title string) string { return colour.Blue(title) }
 func colourField(field string) string { return colour.Green(field) }
 func colourValue(value string) string { return colour.Yellow(value) }
 
-func LeftJustify(text string, width int) string {
+func leftJustify(text string, width int) string {
   if len(text) < width {
     for len(text) < width {
       text = text + " "
