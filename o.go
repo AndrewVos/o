@@ -54,9 +54,9 @@ func writeInt(i interface{}) string {
   return colourValue(strconv.Itoa(int(value.Int())))
 }
 
-func writeSlice(depth int, interfaceValue interface{}) string {
+func writeSlice(depth int, thing interface{}) string {
   result := colourTitle("slice") + " [" + "\n"
-  s := reflect.ValueOf(interfaceValue)
+  s := reflect.ValueOf(thing)
 
   for i := 0; i < s.Len(); i++ {
     result += margin(depth + 1) + write("", depth + 1, s.Index(i).Interface()) + ",\n"
@@ -66,17 +66,17 @@ func writeSlice(depth int, interfaceValue interface{}) string {
   return result
 }
 
-func writeString(interfaceValue interface{}) string {
+func writeString(thing interface{}) string {
   quote := colourQuotes(`"`)
-  return quote + colourValue(interfaceValue.(string)) + quote
+  return quote + colourValue(thing.(string)) + quote
 }
 
-func writeStruct(depth int, interfaceValue interface{}) string {
-  t := reflect.TypeOf(interfaceValue)
+func writeStruct(depth int, thing interface{}) string {
+  t := reflect.TypeOf(thing)
   if t.Kind() == reflect.Ptr{
     t = t.Elem()
   }
-  value := reflect.ValueOf(interfaceValue)
+  value := reflect.ValueOf(thing)
 
   result := colourTitle(t.Name()) + " {\n"
 
@@ -93,12 +93,12 @@ func writeStruct(depth int, interfaceValue interface{}) string {
   return result + margin(depth) + "}"
 }
 
-func writeMap(depth int, interfaceValue interface{}) string {
+func writeMap(depth int, thing interface{}) string {
   result := colourTitle("map") + " {\n"
-  t := reflect.TypeOf(interfaceValue)
+  t := reflect.TypeOf(thing)
   if t.Kind() == reflect.Ptr{ t = t.Elem() }
 
-  value := reflect.ValueOf(interfaceValue)
+  value := reflect.ValueOf(thing)
   for _, key := range value.MapKeys() {
     mapValue := value.MapIndex(key)
     result += margin(depth + 1) + write("", depth + 1, key.Interface()) + ": " + write("", depth + 1, mapValue.Interface()) + ",\n"
