@@ -4,18 +4,29 @@ import (
   "testing"
   "strings"
   "regexp"
+  "os"
+  "fmt"
 )
 
-type Struct1 struct {
+type SimpleStruct struct {
   Name string
   Age int
   Married bool
 }
+type StructWithName struct { Name string }
+type StructWithAge struct { Age int }
+type StructWithDepth struct {
+  NameStruct StructWithName
+  AgeStruct StructWithAge
+}
+type Thing struct { ThingValue string }
+type StructWithSlices struct { Things []Thing }
 
 func assertOutput(t *testing.T, value interface{}, expected string) {
   begin := regexp.MustCompile("\\x1b\\[3[1-9];1m")
   end := regexp.MustCompile("\\x1b\\[0m")
   actual := o(value)
+  if os.Getenv("OUTPUT") != "" { fmt.Println(actual) }
   actual = begin.ReplaceAllString(actual, "")
   actual = end.ReplaceAllString(actual, "")
   actual = strings.TrimSpace(actual)
@@ -26,21 +37,15 @@ func assertOutput(t *testing.T, value interface{}, expected string) {
 }
 
 func TestString(t *testing.T) {
-  s := "o.OOO"
-  expected := `"o.OOO"`
-  assertOutput(t, s, expected)
+  assertOutput(t, "o.OOO", `"o.OOO"`)
 }
 
 func TestInt(t * testing.T) {
-  s := 12345
-  expected := `12345`
-  assertOutput(t, s, expected)
+  assertOutput(t, 12345, "12345")
 }
 
 func TestBoolTrue(t *testing.T) {
-  s := true
-  expected := `true`
-  assertOutput(t, s, expected)
+  assertOutput(t, true, "true")
 }
 
 func TestBoolFalse(t *testing.T) {
@@ -50,27 +55,15 @@ func TestBoolFalse(t *testing.T) {
 }
 
 func TestStruct(t *testing.T) {
-  s := Struct1{Name: "Arthur", Age: 42}
+  s := SimpleStruct{Name: "Arthur", Age: 42}
   expected := `
-Struct1 {
+SimpleStruct {
   Name:    "Arthur"
   Age:     42
   Married: false
 }
   `
   assertOutput(t, s, expected)
-}
-
-type StructWithName struct {
-  Name string
-}
-type StructWithAge struct {
-  Age int
-}
-
-type StructWithDepth struct {
-  NameStruct StructWithName
-  AgeStruct StructWithAge
 }
 
 func TestStructWithDepth(t *testing.T) {
@@ -86,14 +79,6 @@ StructWithDepth {
 }
   `
   assertOutput(t, s, expected)
-}
-
-type Thing struct {
-  ThingValue string
-}
-
-type StructWithSlices struct {
-  Things []Thing
 }
 
 func TestSlice(t *testing.T) {
