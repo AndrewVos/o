@@ -25,6 +25,15 @@ func TestString(t *testing.T) {
   assertOutputContains(t, output, "string")
   assertOutputContains(t, output, "o.OOO")
 }
+
+func TestInt(t * testing.T) {
+  i := 12345
+  output := o(i)
+  fmt.Println(output)
+  assertOutputContains(t, output, "int")
+  assertOutputContains(t, output, "12345")
+}
+
 func TestStruct(t *testing.T) {
   s := Struct1{Name: "Arthur", Age: 42}
   output := o(s)
