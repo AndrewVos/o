@@ -38,7 +38,9 @@ func write(name string, depth int, thing interface{}) string {
 }
 
 func writeBool(thing interface{}) string {
-  if thing.(bool) {
+  thingValue := reflect.ValueOf(thing)
+  if thingValue.Kind() == reflect.Ptr { thingValue = thingValue.Elem() }
+  if thingValue.Bool() {
     return colourValue("true")
   } else {
     return colourValue("false")
@@ -66,14 +68,17 @@ func writeSlice(depth int, thing interface{}) string {
 }
 
 func writeString(thing interface{}) string {
+  thingValue := reflect.ValueOf(thing)
+  if thingValue.Kind() == reflect.Ptr { thingValue = thingValue.Elem() }
   quote := colourQuotes(`"`)
-  return quote + colourValue(thing.(string)) + quote
+  return quote + colourValue(thingValue.String()) + quote
 }
 
 func writeStruct(depth int, thing interface{}) string {
   thingType := reflect.TypeOf(thing)
   if thingType.Kind() == reflect.Ptr{ thingType = thingType.Elem() }
   value := reflect.ValueOf(thing)
+  if value.Kind() == reflect.Ptr { value = value.Elem() }
 
   result := colourTitle(thingType.Name()) + " {\n"
 
@@ -96,6 +101,7 @@ func writeMap(depth int, thing interface{}) string {
   if thingType.Kind() == reflect.Ptr{ thingType = thingType.Elem() }
 
   thingValue := reflect.ValueOf(thing)
+  if thingValue.Kind() == reflect.Ptr { thingValue = thingValue.Elem() }
   for _, key := range thingValue.MapKeys() {
     mapValue := thingValue.MapIndex(key)
     result += margin(depth + 1) + write("", depth + 1, key.Interface()) + ": " + write("", depth + 1, mapValue.Interface()) + ",\n"

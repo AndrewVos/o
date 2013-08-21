@@ -21,6 +21,7 @@ type StructWithDepth struct {
 }
 type Thing struct { ThingValue string }
 type StructWithSlices struct { Things []Thing }
+type StructWithPointerFields struct { SomeField *int }
 
 func assertOutput(t *testing.T, value interface{}, expected string) {
   begin := regexp.MustCompile("\\x1b\\[3[1-9];1m")
@@ -43,18 +44,30 @@ func TestString(t *testing.T) {
   assertOutput(t, "o.OOO", `"o.OOO"`)
 }
 
+func TestPointerString(t *testing.T) {
+  s := "sdfwef"
+  assertOutput(t, &s, `"sdfwef"`)
+}
+
 func TestInt(t * testing.T) {
   assertOutput(t, 12345, "12345")
 }
 
-func TestBoolTrue(t *testing.T) {
-  assertOutput(t, true, "true")
+func TestPointerInt(t * testing.T) {
+  s := 13113
+  assertOutput(t, &s, "13113")
 }
 
-func TestBoolFalse(t *testing.T) {
-  s := false
-  expected := `false`
-  assertOutput(t, s, expected)
+func TestBool(t *testing.T) {
+  assertOutput(t, true, "true")
+  assertOutput(t, false, "false")
+}
+
+func TestPointerBool(t *testing.T) {
+  s := true
+  assertOutput(t, &s, "true")
+  s = false
+  assertOutput(t, &s, "false")
 }
 
 func TestStruct(t *testing.T) {
@@ -67,6 +80,29 @@ SimpleStruct {
 }
   `
   assertOutput(t, s, expected)
+}
+
+func TestPointerStruct(t *testing.T) {
+  s := SimpleStruct{Name: "Hello"}
+  expected := `
+SimpleStruct {
+  Name: "Hello"
+  Age: 0
+  Married: false
+}
+  `
+  assertOutput(t, &s, expected)
+}
+
+func TestStructWithPointerFields(t *testing.T) {
+  i := 1000
+  s := StructWithPointerFields{SomeField: &i}
+  expected := `
+StructWithPointerFields {
+  SomeField: 1000
+}
+  `
+  assertOutput(t, &s, expected)
 }
 
 func TestStructWithDepth(t *testing.T) {
@@ -91,6 +127,16 @@ slice [
   Thing {
     ThingValue: "ererrrmmmm"
   },
+]
+  `
+  assertOutput(t, s, expected)
+}
+
+func TestPointerSlice(t *testing.T) {
+  s := []string { "sdfsd", }
+  expected := `
+slice [
+  "sdfsd",
 ]
   `
   assertOutput(t, s, expected)
@@ -122,6 +168,16 @@ map {
 }
   `
   assertOutput(t, s, expected)
+}
+
+func TestPointerMap(t *testing.T) {
+  s := map[string] string { "I like": "cake" }
+  expected := `
+map {
+  "I like": "cake",
+}
+  `
+  assertOutput(t, &s, expected)
 }
 
 func TestMapOfMaps(t *testing.T) {
