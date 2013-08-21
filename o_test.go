@@ -141,3 +141,21 @@ map {
   `
   assertOutput(t, s, expected)
 }
+
+func TestMapWithStruct(t *testing.T) {
+  s := map[int] Thing {
+    982: Thing {"nwle22"},
+    892: Thing {"ekel2n2l"},
+  }
+  expected := `
+map {
+  982: Thing {
+    ThingValue: "nwle22"
+  },
+  892: Thing {
+    ThingValue: "ekel2n2l"
+  },
+}
+  `
+  assertOutput(t, s, expected)
+}
