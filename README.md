@@ -19,6 +19,6 @@
       o.O(someString)
     }
 
-Run this and you'll see something like this:
+Run that and you'll see something like this:
 
 ![output](https://github.com/AndrewVos/o/raw/master/output.png)
