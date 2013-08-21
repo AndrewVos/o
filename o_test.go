@@ -26,7 +26,10 @@ func assertOutput(t *testing.T, value interface{}, expected string) {
   begin := regexp.MustCompile("\\x1b\\[3[1-9];1m")
   end := regexp.MustCompile("\\x1b\\[0m")
   actual := o(value)
-  if os.Getenv("OUTPUT") != "" { fmt.Println(actual) }
+  if os.Getenv("OUTPUT") != "" {
+    fmt.Println(actual)
+    fmt.Println("----------------------------------------------------------------------------------------------------")
+  }
   actual = begin.ReplaceAllString(actual, "")
   actual = end.ReplaceAllString(actual, "")
   actual = strings.TrimSpace(actual)
