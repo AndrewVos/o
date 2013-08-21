@@ -67,7 +67,7 @@ func writeSlice(depth int, interfaceValue interface{}) string {
 }
 
 func writeString(interfaceValue interface{}) string {
-  return "`" + colourValue(interfaceValue.(string)) + "`"
+  return `"` + colourValue(interfaceValue.(string)) + `"`
 }
 
 func writeStruct(depth int, interfaceValue interface{}) string {

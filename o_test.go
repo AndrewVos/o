@@ -3,7 +3,7 @@ package o
 import (
   "testing"
   "strings"
-  "fmt"
+  "regexp"
 )
 
 type Struct1 struct {
@@ -12,52 +12,53 @@ type Struct1 struct {
   Married bool
 }
 
-func assertOutputContains(t *testing.T, output string, expected string) {
-  if strings.Contains(output, expected) == false {
-    t.Errorf("Expected output to contain %q, but was:\n%v", expected, output)
+func assertOutput(t *testing.T, value interface{}, expected string) {
+  begin := regexp.MustCompile("\\x1b\\[3[1-9];1m")
+  end := regexp.MustCompile("\\x1b\\[0m")
+  actual := o(value)
+  actual = begin.ReplaceAllString(actual, "")
+  actual = end.ReplaceAllString(actual, "")
+  actual = strings.TrimSpace(actual)
+  expected = strings.TrimSpace(expected)
+  if actual != expected {
+    t.Errorf("Expected:\n%v\nGot:\n%v\n", expected, actual)
   }
 }
 
 func TestString(t *testing.T) {
   s := "o.OOO"
-  output := o(s)
-  fmt.Println(output)
-  assertOutputContains(t, output, "o.OOO")
+  expected := `"o.OOO"`
+  assertOutput(t, s, expected)
 }
 
 func TestInt(t * testing.T) {
-  i := 12345
-  output := o(i)
-  fmt.Println(output)
-  assertOutputContains(t, output, "12345")
+  s := 12345
+  expected := `12345`
+  assertOutput(t, s, expected)
 }
 
 func TestBoolTrue(t *testing.T) {
-  i := true
-  output := o(i)
-  assertOutputContains(t, output, "true")
+  s := true
+  expected := `true`
+  assertOutput(t, s, expected)
 }
 
 func TestBoolFalse(t *testing.T) {
-  i := false
-  output := o(i)
-  assertOutputContains(t, output, "false")
+  s := false
+  expected := `false`
+  assertOutput(t, s, expected)
 }
 
 func TestStruct(t *testing.T) {
   s := Struct1{Name: "Arthur", Age: 42}
-  output := o(s)
-  fmt.Println(output)
-  assertOutputContains(t, output, "Struct1")
-
-  assertOutputContains(t, output, "Name")
-  assertOutputContains(t, output, "Arthur")
-
-  assertOutputContains(t, output, "Age")
-  assertOutputContains(t, output, "42")
-
-  assertOutputContains(t, output, "Married")
-  assertOutputContains(t, output, "false")
+  expected := `
+Struct1 {
+  Name:    "Arthur"
+  Age:     42
+  Married: false
+}
+  `
+  assertOutput(t, s, expected)
 }
 
 type StructWithName struct {
@@ -74,43 +75,51 @@ type StructWithDepth struct {
 
 func TestStructWithDepth(t *testing.T) {
   s := StructWithDepth { NameStruct: StructWithName { Name: "Mika" }, AgeStruct: StructWithAge { Age: 10 } }
-  output := o(s)
-  fmt.Println(output)
-  assertOutputContains(t, output, "NameStruct")
-  assertOutputContains(t, output, "Name")
-  assertOutputContains(t, output, "Mika")
-
-  assertOutputContains(t, output, "AgeStruct")
-  assertOutputContains(t, output, "Age")
-  assertOutputContains(t, output, "10")
+  expected := `
+StructWithDepth {
+  NameStruct: StructWithName {
+    Name: "Mika"
+  }
+  AgeStruct:  StructWithAge {
+    Age: 10
+  }
+}
+  `
+  assertOutput(t, s, expected)
 }
 
 type Thing struct {
   ThingValue string
 }
 
-type StructWithArrays struct {
+type StructWithSlices struct {
   Things []Thing
 }
 
-func TestArray(t *testing.T) {
+func TestSlice(t *testing.T) {
   s := []Thing { { ThingValue: "ererrrmmmm" }, }
-  output := o(s)
-  fmt.Println(output)
-  assertOutputContains(t, output, "slice")
-  assertOutputContains(t, output, "ThingValue")
-  assertOutputContains(t, output, "ererrrmmmm")
+  expected := `
+slice [
+  Thing {
+    ThingValue: "ererrrmmmm"
+  },
+]
+  `
+  assertOutput(t, s, expected)
 }
 
-func TestStructWithArray(t *testing.T) {
-  s := StructWithArrays{ Things: []Thing{ { ThingValue: "ermmm" }, } }
-  output := o(s)
-  fmt.Println(output)
-  assertOutputContains(t, output, "StructWithArrays")
-  assertOutputContains(t, output, "Things")
-  assertOutputContains(t, output, "slice")
-  assertOutputContains(t, output, "ThingValue")
-  assertOutputContains(t, output, "ermmm")
+func TestStructWithSlices(t *testing.T) {
+  s := StructWithSlices{ Things: []Thing{ { ThingValue: "ermmm" }, } }
+  expected := `
+StructWithSlices {
+  Things:   slice [
+    Thing {
+      ThingValue: "ermmm"
+    },
+  ]
+}
+  `
+  assertOutput(t, s, expected)
 }
 
 func TestMap(t *testing.T) {
@@ -118,13 +127,13 @@ func TestMap(t *testing.T) {
     "I like": "cake",
     "And also": "ice cream",
   }
-  output := o(s)
-  fmt.Println(output)
-  assertOutputContains(t, output, "map")
-  assertOutputContains(t, output, "I like")
-  assertOutputContains(t, output, "cake")
-  assertOutputContains(t, output, "And also")
-  assertOutputContains(t, output, "ice cream")
+  expected := `
+map {
+  "I like": "cake",
+  "And also": "ice cream",
+}
+  `
+  assertOutput(t, s, expected)
 }
 
 func TestMapOfMaps(t *testing.T) {
@@ -132,13 +141,15 @@ func TestMapOfMaps(t *testing.T) {
     "meh": map[int]string {9: "mergh"},
     "tired of": map[int]string {123: "thinking of test cases"},
   }
-  output := o(s)
-  fmt.Println(output)
-  assertOutputContains(t, output, "meh")
-  assertOutputContains(t, output, "9")
-  assertOutputContains(t, output, "mergh")
-
-  assertOutputContains(t, output, "tired of")
-  assertOutputContains(t, output, "123")
-  assertOutputContains(t, output, "thinking of test cases")
+  expected := `
+map {
+  "meh": map {
+    9: "mergh",
+  },
+  "tired of": map {
+    123: "thinking of test cases",
+  },
+}
+  `
+  assertOutput(t, s, expected)
 }
