@@ -61,8 +61,8 @@ func TestStruct(t *testing.T) {
   s := SimpleStruct{Name: "Arthur", Age: 42}
   expected := `
 SimpleStruct {
-  Name:    "Arthur"
-  Age:     42
+  Name: "Arthur"
+  Age: 42
   Married: false
 }
   `
@@ -76,7 +76,7 @@ StructWithDepth {
   NameStruct: StructWithName {
     Name: "Mika"
   }
-  AgeStruct:  StructWithAge {
+  AgeStruct: StructWithAge {
     Age: 10
   }
 }
@@ -100,7 +100,7 @@ func TestStructWithSlices(t *testing.T) {
   s := StructWithSlices{ Things: []Thing{ { ThingValue: "ermmm" }, } }
   expected := `
 StructWithSlices {
-  Things:   slice [
+  Things: slice [
     Thing {
       ThingValue: "ermmm"
     },

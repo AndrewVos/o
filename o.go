@@ -55,7 +55,7 @@ func writeInt(i interface{}) string {
 }
 
 func writeSlice(depth int, interfaceValue interface{}) string {
-  result := margin(depth) + colourTitle("slice") + " [" + "\n"
+  result := colourTitle("slice") + " [" + "\n"
   s := reflect.ValueOf(interfaceValue)
 
   for i := 0; i < s.Len(); i++ {
@@ -80,19 +80,12 @@ func writeStruct(depth int, interfaceValue interface{}) string {
 
   result := colourTitle(t.Name()) + " {\n"
 
-  fieldSeparator := ": "
-  widestName := 0
-  for i := 0; i < t.NumField(); i++ {
-    if length := len(t.Field(i).Name) + len(fieldSeparator); length > widestName {
-      widestName = length
-    }
-  }
   for i := 0; i < t.NumField(); i++ {
     field := t.Field(i)
 
     if !field.Anonymous {
       it := value.Field(i).Interface()
-      displayName := colourField(leftJustify(field.Name + fieldSeparator, widestName))
+      displayName := colourField(field.Name) + ": "
       result += margin(depth + 1) + write(displayName, depth + 1, it) + "\n"
     }
   }
@@ -126,12 +119,3 @@ func colourQuotes(quote string) string { return colour.Red(quote) }
 func colourTitle(title string) string { return colour.Blue(title) }
 func colourField(field string) string { return colour.Green(field) }
 func colourValue(value string) string { return colour.Yellow(value) }
-
-func leftJustify(text string, width int) string {
-  if len(text) < width {
-    for len(text) < width {
-      text = text + " "
-    }
-  }
-  return text
-}
