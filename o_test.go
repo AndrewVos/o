@@ -18,6 +18,13 @@ func assertOutputContains(t *testing.T, output string, expected string) {
   }
 }
 
+func TestString(t *testing.T) {
+  s := "o.OOO"
+  output := o(s)
+  fmt.Println(output)
+  assertOutputContains(t, output, "string")
+  assertOutputContains(t, output, "o.OOO")
+}
 func TestStruct(t *testing.T) {
   s := Struct1{Name: "Arthur", Age: 42}
   output := o(s)

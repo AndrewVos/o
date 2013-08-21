@@ -18,11 +18,17 @@ func o(i interface{}) string {
     t = t.Elem()
   }
 
-  if t.Kind() == reflect.Struct {
+  if t.Kind() == reflect.String {
+    return writeString(i)
+  } else if t.Kind() == reflect.Struct {
     return writeStruct(i, t, 0)
   }
 
   return t.Name()
+}
+
+func writeString(interfaceValue interface{}) string {
+  return colouriseStructTitle("string") + " (\n" + margin(1) + interfaceValue.(string) + "\n)"
 }
 
 func writeStruct(interfaceValue interface{}, structType reflect.Type, depth int) string {
@@ -64,7 +70,7 @@ func writeStruct(interfaceValue interface{}, structType reflect.Type, depth int)
 func margin(depth int) string {
   m := ""
   if depth == 0 { return m }
-  for i:= 0; i <= depth; i++ {
+  for i:= 1; i <= depth; i++ {
     m += "  "
   }
   return m
