@@ -126,3 +126,19 @@ func TestMap(t *testing.T) {
   assertOutputContains(t, output, "And also")
   assertOutputContains(t, output, "ice cream")
 }
+
+func TestMapOfMaps(t *testing.T) {
+  s := map[string] map[int]string {
+    "meh": map[int]string {9: "mergh"},
+    "tired of": map[int]string {123: "thinking of test cases"},
+  }
+  output := o(s)
+  fmt.Println(output)
+  assertOutputContains(t, output, "meh")
+  assertOutputContains(t, output, "9")
+  assertOutputContains(t, output, "mergh")
+
+  assertOutputContains(t, output, "tired of")
+  assertOutputContains(t, output, "123")
+  assertOutputContains(t, output, "thinking of test cases")
+}

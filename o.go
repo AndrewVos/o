@@ -109,7 +109,7 @@ func writeMap(depth int, interfaceValue interface{}) string {
     mapValue := value.MapIndex(key)
     result += margin(depth + 1) + write("", depth + 1, key.Interface()) + ": " + write("", depth + 1, mapValue.Interface()) + ",\n"
   }
-  return result + "}"
+  return result + margin(depth) + "}"
 }
 
 func margin(depth int) string {
