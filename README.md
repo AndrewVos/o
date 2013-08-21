@@ -24,5 +24,5 @@ Run that and you'll see something like this:
 ![output](https://github.com/AndrewVos/o/raw/master/output.png)
 
 ## FAQ
-  Q: How do I pronounce o.O?
-  A: [Kind of like this](http://www.youtube.com/watch?v=140S4LkQxxA)
+- Q: How do I pronounce o.O?
+- A: [Kind of like this](http://www.youtube.com/watch?v=140S4LkQxxA)
