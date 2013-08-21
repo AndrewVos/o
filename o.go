@@ -97,8 +97,6 @@ func writeStruct(depth int, thing interface{}) string {
 
 func writeMap(depth int, thing interface{}) string {
   result := colourTitle("map") + " {\n"
-  thingType := reflect.TypeOf(thing)
-  if thingType.Kind() == reflect.Ptr{ thingType = thingType.Elem() }
 
   thingValue := reflect.ValueOf(thing)
   if thingValue.Kind() == reflect.Ptr { thingValue = thingValue.Elem() }

@@ -133,13 +133,14 @@ slice [
 }
 
 func TestPointerSlice(t *testing.T) {
-  s := []string { "sdfsd", }
+  a := "sdfsd"
+  s := []*string { &a }
   expected := `
 slice [
   "sdfsd",
 ]
   `
-  assertOutput(t, s, expected)
+  assertOutput(t, &s, expected)
 }
 
 func TestStructWithSlices(t *testing.T) {
