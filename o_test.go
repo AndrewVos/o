@@ -1,27 +1,27 @@
 package o
 
 import (
-	"testing"
-	"strings"
-	"regexp"
-	"os"
 	"fmt"
+	"os"
+	"regexp"
+	"strings"
+	"testing"
 )
 
 type SimpleStruct struct {
-	Name string
-	Age int
+	Name    string
+	Age     int
 	Married bool
 }
-type StructWithName struct { Name string }
-type StructWithAge struct { Age int }
+type StructWithName struct{ Name string }
+type StructWithAge struct{ Age int }
 type StructWithDepth struct {
 	NameStruct StructWithName
-	AgeStruct StructWithAge
+	AgeStruct  StructWithAge
 }
-type Thing struct { ThingValue string }
-type StructWithSlices struct { Things []Thing }
-type StructWithPointerFields struct { SomeField *int }
+type Thing struct{ ThingValue string }
+type StructWithSlices struct{ Things []Thing }
+type StructWithPointerFields struct{ SomeField *int }
 
 func assertOutput(t *testing.T, value interface{}, expected string) {
 	begin := regexp.MustCompile("\\x1b\\[3[1-9];1m")
@@ -49,11 +49,11 @@ func TestPointerString(t *testing.T) {
 	assertOutput(t, &s, `"sdfwef"`)
 }
 
-func TestInt(t * testing.T) {
+func TestInt(t *testing.T) {
 	assertOutput(t, 12345, "12345")
 }
 
-func TestPointerInt(t * testing.T) {
+func TestPointerInt(t *testing.T) {
 	s := 13113
 	assertOutput(t, &s, "13113")
 }
@@ -106,7 +106,7 @@ StructWithPointerFields {
 }
 
 func TestStructWithDepth(t *testing.T) {
-	s := StructWithDepth { NameStruct: StructWithName { Name: "Mika" }, AgeStruct: StructWithAge { Age: 10 } }
+	s := StructWithDepth{NameStruct: StructWithName{Name: "Mika"}, AgeStruct: StructWithAge{Age: 10}}
 	expected := `
 StructWithDepth {
   NameStruct: StructWithName {
@@ -121,7 +121,7 @@ StructWithDepth {
 }
 
 func TestSlice(t *testing.T) {
-	s := []Thing { { ThingValue: "ererrrmmmm" }, }
+	s := []Thing{{ThingValue: "ererrrmmmm"}}
 	expected := `
 slice [
   Thing {
@@ -134,7 +134,7 @@ slice [
 
 func TestPointerSlice(t *testing.T) {
 	a := "sdfsd"
-	s := []*string { &a }
+	s := []*string{&a}
 	expected := `
 slice [
   "sdfsd",
@@ -144,7 +144,7 @@ slice [
 }
 
 func TestStructWithSlices(t *testing.T) {
-	s := StructWithSlices{ Things: []Thing{ { ThingValue: "ermmm" }, } }
+	s := StructWithSlices{Things: []Thing{{ThingValue: "ermmm"}}}
 	expected := `
 StructWithSlices {
   Things: slice [
@@ -158,8 +158,8 @@ StructWithSlices {
 }
 
 func TestMap(t *testing.T) {
-	s := map[string] string {
-		"I like": "cake",
+	s := map[string]string{
+		"I like":   "cake",
 		"And also": "ice cream",
 	}
 	expected := `
@@ -172,7 +172,7 @@ map {
 }
 
 func TestPointerMap(t *testing.T) {
-	s := map[string] string { "I like": "cake" }
+	s := map[string]string{"I like": "cake"}
 	expected := `
 map {
   "I like": "cake",
@@ -182,9 +182,9 @@ map {
 }
 
 func TestMapOfMaps(t *testing.T) {
-	s := map[string] map[int]string {
-		"meh": map[int]string {9: "mergh"},
-		"tired of": map[int]string {123: "thinking of test cases"},
+	s := map[string]map[int]string{
+		"meh":      map[int]string{9: "mergh"},
+		"tired of": map[int]string{123: "thinking of test cases"},
 	}
 	expected := `
 map {
@@ -200,9 +200,9 @@ map {
 }
 
 func TestMapWithStruct(t *testing.T) {
-	s := map[int] Thing {
-		982: Thing {"nwle22"},
-		892: Thing {"ekel2n2l"},
+	s := map[int]Thing{
+		982: Thing{"nwle22"},
+		892: Thing{"ekel2n2l"},
 	}
 	expected := `
 map {
