@@ -1,5 +1,9 @@
 # o.O
 
+## Demo
+
+![output](https://github.com/AndrewVos/o/raw/master/o.gif)
+
 ## Usage
 
     package main
@@ -18,10 +22,6 @@
       someString := "o.O is pretty awesome!"
       o.O(someString)
     }
-
-Run that and you'll see something like this:
-
-![output](https://github.com/AndrewVos/o/raw/master/output.png)
 
 ## Install
     go get github.com/AndrewVos/o
