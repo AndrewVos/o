@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"reflect"
 	"strconv"
+	"time"
 
 	"github.com/AndrewVos/colour"
 )
@@ -30,12 +31,14 @@ func write(name string, depth int, thing interface{}) string {
 		result += writeString(thing)
 	} else if thingType.Kind() == reflect.Bool {
 		result += writeBool(thing)
-	} else if thingType.Kind() == reflect.Struct {
-		result += writeStruct(depth, thing)
+	} else if thingType == reflect.TypeOf(time.Time{}) {
+		result += writeTime(thing)
 	} else if thingType.Kind() == reflect.Slice {
 		result += writeSlice(depth, thing)
 	} else if thingType.Kind() == reflect.Map {
 		result += writeMap(depth, thing)
+	} else if thingType.Kind() == reflect.Struct {
+		result += writeStruct(depth, thing)
 	}
 	return result
 }
@@ -83,6 +86,15 @@ func writeString(thing interface{}) string {
 	}
 	quote := colourQuotes(`"`)
 	return quote + colourValue(thingValue.String()) + quote
+}
+
+func writeTime(thing interface{}) string {
+	thingValue := reflect.ValueOf(thing)
+	if thingValue.Kind() == reflect.Ptr {
+		thingValue = thingValue.Elem()
+	}
+	t := thingValue.Interface().(time.Time)
+	return colourValue(fmt.Sprintf("%v", t))
 }
 
 func writeStruct(depth int, thing interface{}) string {

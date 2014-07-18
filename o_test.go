@@ -6,6 +6,7 @@ import (
 	"regexp"
 	"strings"
 	"testing"
+	"time"
 )
 
 type SimpleStruct struct {
@@ -227,5 +228,11 @@ func TestStructWithUnexportedFields(t *testing.T) {
 StructWithUnexportedFields {
   SomeField: 0
 }`
+	assertOutput(t, s, expected)
+}
+
+func TestTime(t *testing.T) {
+	s := time.Date(1983, time.October, 23, 10, 0, 0, 0, time.UTC)
+	expected := "1983-10-23 10:00:00 +0000 UTC"
 	assertOutput(t, s, expected)
 }
