@@ -2,9 +2,10 @@ package o
 
 import (
 	"fmt"
-	"github.com/AndrewVos/colour"
 	"reflect"
 	"strconv"
+
+	"github.com/AndrewVos/colour"
 )
 
 func O(thing interface{}) {
@@ -100,9 +101,12 @@ func writeStruct(depth int, thing interface{}) string {
 		field := thingType.Field(fieldIndex)
 
 		if !field.Anonymous {
-			childThing := value.Field(fieldIndex).Interface()
-			displayName := colourField(field.Name) + ": "
-			result += margin(depth+1) + write(displayName, depth+1, childThing) + "\n"
+			childThingField := value.Field(fieldIndex)
+			if childThingField.CanInterface() {
+				childThing := childThingField.Interface()
+				displayName := colourField(field.Name) + ": "
+				result += margin(depth+1) + write(displayName, depth+1, childThing) + "\n"
+			}
 		}
 	}
 

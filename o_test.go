@@ -22,6 +22,10 @@ type StructWithDepth struct {
 type Thing struct{ ThingValue string }
 type StructWithSlices struct{ Things []Thing }
 type StructWithPointerFields struct{ SomeField *int }
+type StructWithUnexportedFields struct {
+	SomeField  int
+	unexported int
+}
 
 func assertOutput(t *testing.T, value interface{}, expected string) {
 	begin := regexp.MustCompile("\\x1b\\[3[1-9];1m")
@@ -214,5 +218,14 @@ map {
   },
 }
 	`
+	assertOutput(t, s, expected)
+}
+
+func TestStructWithUnexportedFields(t *testing.T) {
+	s := StructWithUnexportedFields{}
+	expected := `
+StructWithUnexportedFields {
+  SomeField: 0
+}`
 	assertOutput(t, s, expected)
 }
