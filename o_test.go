@@ -27,6 +27,9 @@ type StructWithUnexportedFields struct {
 	SomeField  int
 	unexported int
 }
+type StructWithPointerField struct {
+	SomeField *SimpleStruct
+}
 
 func assertOutput(t *testing.T, value interface{}, expected string) {
 	begin := regexp.MustCompile("\\x1b\\[3[1-9];1m")
@@ -234,5 +237,25 @@ StructWithUnexportedFields {
 func TestTime(t *testing.T) {
 	s := time.Date(1983, time.October, 23, 10, 0, 0, 0, time.UTC)
 	expected := "1983-10-23 10:00:00 +0000 UTC"
+	assertOutput(t, s, expected)
+}
+
+func TestZeroSlice(t *testing.T) {
+	var slice []string
+	expected := `
+slice [
+]
+	`
+	assertOutput(t, slice, expected)
+}
+
+func TestStructWithZeroStructField(t *testing.T) {
+	var s StructWithPointerField
+	expected := `
+StructWithPointerField {
+  SomeField: SimpleStruct {
+  }
+}
+	`
 	assertOutput(t, s, expected)
 }

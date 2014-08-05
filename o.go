@@ -70,9 +70,11 @@ func writeSlice(depth int, thing interface{}) string {
 		thingValue = thingValue.Elem()
 	}
 
-	for elementIndex := 0; elementIndex < thingValue.Len(); elementIndex++ {
-		element := thingValue.Index(elementIndex).Interface()
-		result += margin(depth+1) + write("", depth+1, element) + ",\n"
+	if thingValue.IsValid() {
+		for elementIndex := 0; elementIndex < thingValue.Len(); elementIndex++ {
+			element := thingValue.Index(elementIndex).Interface()
+			result += margin(depth+1) + write("", depth+1, element) + ",\n"
+		}
 	}
 
 	result += margin(depth) + "]"
@@ -109,15 +111,17 @@ func writeStruct(depth int, thing interface{}) string {
 
 	result := colourTitle(thingType.Name()) + " {\n"
 
-	for fieldIndex := 0; fieldIndex < thingType.NumField(); fieldIndex++ {
-		field := thingType.Field(fieldIndex)
+	if value.IsValid() {
+		for fieldIndex := 0; fieldIndex < thingType.NumField(); fieldIndex++ {
+			field := thingType.Field(fieldIndex)
 
-		if !field.Anonymous {
-			childThingField := value.Field(fieldIndex)
-			if childThingField.CanInterface() {
-				childThing := childThingField.Interface()
-				displayName := colourField(field.Name) + ": "
-				result += margin(depth+1) + write(displayName, depth+1, childThing) + "\n"
+			if !field.Anonymous {
+				childThingField := value.Field(fieldIndex)
+				if childThingField.CanInterface() {
+					childThing := childThingField.Interface()
+					displayName := colourField(field.Name) + ": "
+					result += margin(depth+1) + write(displayName, depth+1, childThing) + "\n"
+				}
 			}
 		}
 	}
