@@ -258,3 +258,9 @@ StructWithPointerField {
 	`
 	assertOutput(t, s, expected)
 }
+
+func TestBytes(t *testing.T) {
+	s := byte(123)
+	expected := "123"
+	assertOutput(t, s, expected)
+}

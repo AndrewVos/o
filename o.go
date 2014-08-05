@@ -27,6 +27,8 @@ func write(name string, depth int, thing interface{}) string {
 
 	if thingType.Kind() == reflect.Int {
 		result += writeInt(thing)
+	} else if thingType.Kind() == reflect.Uint8 {
+		result += writeUint(thing)
 	} else if thingType.Kind() == reflect.String {
 		result += writeString(thing)
 	} else if thingType.Kind() == reflect.Bool {
@@ -61,6 +63,14 @@ func writeInt(thing interface{}) string {
 		thingValue = thingValue.Elem()
 	}
 	return colourValue(strconv.Itoa(int(thingValue.Int())))
+}
+
+func writeUint(thing interface{}) string {
+	thingValue := reflect.ValueOf(thing)
+	if thingValue.Kind() == reflect.Ptr {
+		thingValue = thingValue.Elem()
+	}
+	return colourValue(strconv.Itoa(int(thingValue.Uint())))
 }
 
 func writeSlice(depth int, thing interface{}) string {
