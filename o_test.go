@@ -243,8 +243,7 @@ func TestTime(t *testing.T) {
 func TestZeroSlice(t *testing.T) {
 	var slice []string
 	expected := `
-slice [
-]
+slice []
 	`
 	assertOutput(t, slice, expected)
 }

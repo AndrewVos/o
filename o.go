@@ -64,20 +64,29 @@ func writeInt(thing interface{}) string {
 }
 
 func writeSlice(depth int, thing interface{}) string {
-	result := colourTitle("slice") + " [" + "\n"
+	result := colourTitle("slice") + " ["
 	thingValue := reflect.ValueOf(thing)
 	if thingValue.Kind() == reflect.Ptr {
 		thingValue = thingValue.Elem()
 	}
 
+	hasItems := false
 	if thingValue.IsValid() {
+		if thingValue.Len() > 0 {
+			result += "\n"
+			hasItems = true
+		}
 		for elementIndex := 0; elementIndex < thingValue.Len(); elementIndex++ {
 			element := thingValue.Index(elementIndex).Interface()
 			result += margin(depth+1) + write("", depth+1, element) + ",\n"
 		}
 	}
 
-	result += margin(depth) + "]"
+	if hasItems {
+		result += margin(depth) + "]"
+	} else {
+		result += "]"
+	}
 	return result
 }
 
