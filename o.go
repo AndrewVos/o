@@ -17,6 +17,14 @@ func o(thing interface{}) string {
 	return write("", 0, thing)
 }
 
+func isUint(kind reflect.Kind) bool {
+	return kind == reflect.Uint ||
+		kind == reflect.Uint8 ||
+		kind == reflect.Uint16 ||
+		kind == reflect.Uint32 ||
+		kind == reflect.Uint64
+}
+
 func write(name string, depth int, thing interface{}) string {
 	result := name
 
@@ -27,7 +35,7 @@ func write(name string, depth int, thing interface{}) string {
 
 	if thingType.Kind() == reflect.Int {
 		result += writeInt(thing)
-	} else if thingType.Kind() == reflect.Uint8 {
+	} else if isUint(thingType.Kind()) {
 		result += writeUint(thing)
 	} else if thingType.Kind() == reflect.String {
 		result += writeString(thing)

@@ -264,3 +264,24 @@ func TestBytes(t *testing.T) {
 	expected := "123"
 	assertOutput(t, s, expected)
 }
+
+func TestUints(t *testing.T) {
+	var a uint = 1
+	var b uint8 = 2
+	var c uint16 = 3
+	var d uint32 = 4
+	var e uint64 = 5
+
+	s := []interface{}{a, b, c, d, e}
+
+	expected := `
+slice [
+  1,
+  2,
+  3,
+  4,
+  5,
+]
+	`
+	assertOutput(t, s, expected)
+}
