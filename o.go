@@ -25,6 +25,14 @@ func isUint(kind reflect.Kind) bool {
 		kind == reflect.Uint64
 }
 
+func isInt(kind reflect.Kind) bool {
+	return kind == reflect.Int ||
+		kind == reflect.Int8 ||
+		kind == reflect.Int16 ||
+		kind == reflect.Int32 ||
+		kind == reflect.Int64
+}
+
 func write(name string, depth int, thing interface{}) string {
 	result := name
 
@@ -33,7 +41,7 @@ func write(name string, depth int, thing interface{}) string {
 		thingType = thingType.Elem()
 	}
 
-	if thingType.Kind() == reflect.Int {
+	if isInt(thingType.Kind()) {
 		result += writeInt(thing)
 	} else if isUint(thingType.Kind()) {
 		result += writeUint(thing)

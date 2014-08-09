@@ -265,6 +265,27 @@ func TestBytes(t *testing.T) {
 	assertOutput(t, s, expected)
 }
 
+func TestInts(t *testing.T) {
+	var a int = 1
+	var b int8 = 2
+	var c int16 = 3
+	var d int32 = 4
+	var e int64 = 5
+
+	s := []interface{}{a, b, c, d, e}
+
+	expected := `
+slice [
+  1,
+  2,
+  3,
+  4,
+  5,
+]
+	`
+	assertOutput(t, s, expected)
+}
+
 func TestUints(t *testing.T) {
 	var a uint = 1
 	var b uint8 = 2
