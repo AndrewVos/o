@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"reflect"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/AndrewVos/colour"
@@ -179,14 +180,7 @@ func writeMap(depth int, thing interface{}) string {
 }
 
 func margin(depth int) string {
-	m := ""
-	if depth == 0 {
-		return m
-	}
-	for i := 1; i <= depth; i++ {
-		m += "  "
-	}
-	return m
+	return strings.Repeat("  ", depth)
 }
 
 func colourQuotes(quote string) string { return colour.Red(quote) }
